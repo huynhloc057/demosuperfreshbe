@@ -84,7 +84,7 @@ exports.signinWithGoogle = async (req, res) => {
       idToken: token,
       audience: client_id,
     });
-    const { email, picture } = ticket.getPayload();
+    const { email, picture, name: nameGoogle } = ticket.getPayload();
     const existingUser = await User.findOne({
       email,
       isDisabled: { $ne: true },
@@ -93,16 +93,21 @@ exports.signinWithGoogle = async (req, res) => {
       const { _id, name, email, profilePicture, role } = existingUser;
       const token = await generateJwtToken(_id, email, role);
       // response token and user info
-      res.status(201).json({
-        token,
-        user: { _id, name, email, profilePicture, role },
-      });
+      res
+        .status(201)
+        .json({ token, user: { _id, name, email, profilePicture, role } });
     } else {
+      const {
+        email: emailGoogle,
+        picture,
+        name: nameGoogle,
+      } = ticket.getPayload();
       const newUser = {
-        name,
-        email,
+        name: nameGoogle,
+        email: emailGoogle,
         profilePicture: picture,
       };
+      console.log("newUser", newUser);
       let user = await User.create(newUser);
       const { _id, name, email, profilePicture, role } = user;
       const token = await generateJwtToken(_id, email, role);
