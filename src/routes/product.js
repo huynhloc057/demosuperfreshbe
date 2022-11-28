@@ -4,11 +4,15 @@ const {
   getProductById,
   getProductDetailsBySlug,
   deleteProductById,
+  enableProductById,
   getProducts,
   updateProduct,
   searchByProductName,
   getProductByCategory,
   addProductReview,
+  deleteProductByCateId,
+  enableProductByCateId,
+  getProductsDisable,
 } = require("../controllers/product");
 const {
   requireSignin,
@@ -22,26 +26,53 @@ router.post(
   "/add",
   requireSignin,
   adminMiddleware,
-  uploadCloud.array("productPicture"),
+  uploadCloud.array("productPictures"),
   addProduct
 );
-router.post("/getProducts", getProducts);
-router.post("/:slug", getProductDetailsBySlug);
-router.post("/searchByProductName", searchByProductName);
-router.post("/getById", getProductById);
-router.delete(
-  "/deleteProductById",
-  requireSignin,
-  adminMiddleware,
-  deleteProductById
-);
-router.post("/update", requireSignin, adminMiddleware, updateProduct);
+router.get("/getProducts", getProducts);
+router.post("/getProductDisable", getProductsDisable);
 router.post(
   "/addProductReview",
   requireSignin,
   userMiddleware,
   addProductReview
 );
-router.post("/getProductsByCategory/:_id", getProductByCategory);
+router.get("/getById", getProductById);
+router.post(
+  "/update/:slug",
+  requireSignin,
+  adminMiddleware,
+  uploadCloud.array("productPictures"),
+  updateProduct
+);
+router.post("/searchByProductName", searchByProductName);
+router.get("/getProductsByCategory/:categoryId", getProductByCategory);
+router.post(
+  "/deleteByCategory",
+  requireSignin,
+  adminMiddleware,
+  deleteProductByCateId
+);
+router.post(
+  "/enableByCategory",
+  requireSignin,
+  adminMiddleware,
+  enableProductByCateId
+);
+
+router.post(
+  "/deleteProductById",
+  requireSignin,
+  adminMiddleware,
+  deleteProductById
+);
+
+router.post(
+  "/enableProductById",
+  requireSignin,
+  adminMiddleware,
+  enableProductById
+);
+router.get("/:slug", getProductDetailsBySlug);
 
 module.exports = router;
