@@ -174,7 +174,7 @@ exports.paymentWithMomo = async (req, res) => {
   const orderInfo = "Thanh toán rau củ tại Super Fresh";
   const redirectUrl = "https://client-superfresh.vercel.app/cart";
   const ipnUrl =
-    "https://apisuperfreshute.herokuapp.com/api/order/addOrderByPaymentMomo";
+    "https://superfreshdemoforbackend.vercel.app/api/order/addOrderByPaymentMomo";
   const amount = order.totalAmount;
   const requestType = "captureWallet";
   const extraData = JSON.stringify({ ...order, userId: req.user._id }) + "@"; //pass empty value if your merchant does not have stores
