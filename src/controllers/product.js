@@ -302,7 +302,7 @@ exports.addProductReview = (req, res) => {
 };
 
 exports.getNewestProduct = async (req, res) => {
-  let products = await Product.find({ isDisabled: { $eq: true } })
+  let products = await Product.find({ isDisabled: { $eq: false } })
     .populate({ path: "category", select: "_id name categoryImage" })
     .limit(10)
     .sort({ createdAt: -1 });
