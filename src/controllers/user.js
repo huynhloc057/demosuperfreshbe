@@ -1,5 +1,8 @@
 const { User } = require("../models");
-const bcrypt = require("bcrypt");
+const {
+  sendMessageBlockMail,
+  sendMessageRecoverMail,
+} = require("../services/mailer");
 
 exports.getUsers = (req, res) => {
   User.find({ isDisabled: { $ne: true }, role: { $ne: "admin" } }).exec(
@@ -31,6 +34,28 @@ exports.getDisabledUsers = (req, res) => {
   );
 };
 
+exports.updateUserInfo = async (req, res) => {
+  const { name } = req.body;
+  const payload = { name };
+  try {
+    if (req.file) {
+      payload.profilePicture = req.file.path;
+    }
+    const userObj = await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { ...payload },
+      { upsert: true }
+    );
+    if (userObj) {
+      res.status(202).json({ message: "Updated successfully" });
+    } else {
+      res.status(400).json({ error: "Something went wrong" });
+    }
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+};
+
 exports.updateUser = async (req, res) => {
   const user = { ...req.body };
   console.log(user);
@@ -51,12 +76,14 @@ exports.updateUser = async (req, res) => {
 
 exports.disableUser = async (req, res) => {
   const user = { ...req.body };
+  console.log(user);
   try {
     const updatedUser = await User.updateOne(
       { _id: user._id },
       { $set: { isDisabled: true } }
     );
     if (updatedUser) {
+      sendMessageBlockMail(user.email);
       res.status(202).json({ message: "disabled successfully" });
     } else {
       res.status(400).json({ error: "something went wrong" });
@@ -68,12 +95,14 @@ exports.disableUser = async (req, res) => {
 
 exports.enableUser = async (req, res) => {
   const user = { ...req.body };
+  console.log(user);
   try {
     const updatedUser = await User.updateOne(
       { _id: user._id },
       { $set: { isDisabled: false } }
     );
     if (updatedUser) {
+      sendMessageRecoverMail(user.email);
       res.status(202).json({ message: "enabled user successfully" });
     } else {
       res.status(400).json({ error: "something went wrong" });

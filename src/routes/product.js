@@ -13,6 +13,8 @@ const {
   deleteProductByCateId,
   enableProductByCateId,
   getProductsDisable,
+  getNewestProduct,
+  updateDiscountPercentByCategory,
 } = require("../controllers/product");
 const {
   requireSignin,
@@ -30,6 +32,7 @@ router.post(
   addProduct
 );
 router.get("/getProducts", getProducts);
+router.get("/getNewestProducts", getNewestProduct);
 router.post("/getProductDisable", getProductsDisable);
 router.post(
   "/addProductReview",
@@ -72,6 +75,12 @@ router.post(
   requireSignin,
   adminMiddleware,
   enableProductById
+);
+router.post(
+  "/updateDiscountPercent",
+  requireSignin,
+  adminMiddleware,
+  updateDiscountPercentByCategory
 );
 router.get("/:slug", getProductDetailsBySlug);
 

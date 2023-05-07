@@ -301,6 +301,24 @@ exports.addProductReview = (req, res) => {
   });
 };
 
+exports.getNewestProduct = async (req, res) => {
+  let products = await Product.find({ isDisabled: { $eq: true } })
+    .populate({ path: "category", select: "_id name categoryImage" })
+    .limit(10)
+    .sort({ createdAt: -1 });
+  return res.status(200).json({ success: true, code: 200, products });
+};
+
+exports.updateDiscountPercentByCategory = (req, res) => {
+  const { _id, discountPercent } = req.body;
+  Product.updateMany({ category: _id }, { $set: { discountPercent } }).exec(
+    (error, result) => {
+      if (error) return res.status(400).json({ error });
+      res.status(202).json({ result });
+    }
+  );
+};
+
 // Example update status product
 // db.Owners.update({ _id: req.params.id },{"$set":{"active":false}})
 //   .then(dbModel => res.json(dbModel))
