@@ -15,6 +15,7 @@ const {
   getProductsDisable,
   getNewestProduct,
   updateDiscountPercentByCategory,
+  updateQty
 } = require("../controllers/product");
 const {
   requireSignin,
@@ -82,6 +83,8 @@ router.post(
   adminMiddleware,
   updateDiscountPercentByCategory
 );
+router.post("/updateQuantity", updateQty);
+
 router.get("/:slug", getProductDetailsBySlug);
 
 module.exports = router;
